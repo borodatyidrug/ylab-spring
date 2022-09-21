@@ -10,10 +10,16 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
+	
     UserDto userRequestToUserDto(UserRequest userRequest);
+    
     UserRequest userDtoToUserRequest(UserDto userDto);
+    
     User userDtoToUser(UserDto userDto);
+    
     UserDto userToUserDto(User user);
+    
     DetailedUserBookResponse userDtoToDetailedUserBookResponse(UserDto userDto);
+    
     UserDto updateUserRequestToUserDto(UpdateUserRequest updateUserRequest);
 }

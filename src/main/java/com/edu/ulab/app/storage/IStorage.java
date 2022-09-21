@@ -1,9 +1,38 @@
 package com.edu.ulab.app.storage;
 
 public interface IStorage {
-	Long save(Idable<Long> objDto) throws IllegalArgumentException;
-	Object get(Long objId) throws IllegalArgumentException;
-	void update(Idable<Long> objDto) throws IllegalArgumentException;
-	void delete(Long id) throws IllegalArgumentException;
+	
+	/**
+	 * Сохраняет объект в хранилище и возвращает сгенерированный идентификатор-ключ
+	 * @param obj Объект
+	 * @return Сгенерированный идентификатор-ключ
+	 */
+	Long save(Idable<Long> obj);
+	
+	/**
+	 * Возвращает объект из хранилища по идентификатору-ключу
+	 * @param objId Идентификатор-ключ
+	 * @return Запрашиваемый объект
+	 */
+	Object get(Long objId);
+	
+	/**
+	 * Обновляет объект хранилища, заменяя целевой объект хранилища на переданный в качестве аргумента.
+	 * @param obj Объект-источник
+	 */
+	void update(Idable<Long> obj);
+	
+	/**
+	 * Удаляет объект из хранилища по его идентификатору-ключу
+	 * @param id Идентификатор-ключ удаляемого объекта
+	 * @return True, если объект удален из хранилища. False, если объект не был удален из хранилища по какой-то причине.
+	 */
+	boolean delete(Long id);
+	
+	/**
+	 * Проверяет, имеется ли в хранилище объект с указанным идентификатором-ключом
+	 * @param id Идентификатор-ключ проверяемого объекта
+	 * @return 
+	 */
 	boolean contains(Long id);
 }

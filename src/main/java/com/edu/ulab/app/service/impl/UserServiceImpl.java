@@ -9,6 +9,8 @@ import com.edu.ulab.app.storage.IStorage;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +18,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserServiceImpl implements UserService {
 	
-	IStorage storage;
-	UserMapper userMapper;
+	private IStorage storage;
+	private UserMapper userMapper;
 	
 	@Autowired
 	public void setStorage(IStorage storage) {
@@ -34,41 +36,57 @@ public class UserServiceImpl implements UserService {
         // сгенерировать идентификатор
         // создать пользователя
         // вернуть сохраненного пользователя со всеми необходимыми полями id
-    	User user = userMapper.userDtoToUser(userDto);
-    	log.debug("Created user: {}", user);
-    	Long generatedId = storage.save(user);
-    	log.debug("Created user got generated id from storage. Id is {}", generatedId);
-        userDto.setId(generatedId);
-        return userDto;
+    	if (userDto != null) {
+    		User user = userMapper.userDtoToUser(userDto);
+        	log.debug("Created user: {}", user);
+        	Long generatedId = storage.save(user);
+        	log.debug("Created user got generated id from storage. Id is {}", generatedId);
+            userDto.setId(generatedId);
+            return userDto;
+    	} else {
+    		throw new IllegalArgumentException("Only non null values are allowed");
+    	}
     }
 
     @Override
     public UserDto updateUser(UserDto userDto) {
-    	User user = userMapper.userDtoToUser(userDto);
-    	Long id = user.getId();
-    	storage.update(user);
-    	log.debug("User with id {} successfully updated to {}", id, user);
-        return userDto;
+    	if (userDto != null && userDto.getId() != null && storage.contains(userDto.getId())) {
+    		User user = userMapper.userDtoToUser(userDto);
+        	Long id = user.getId();
+        	storage.update(user);
+        	log.debug("User with id {} successfully updated to {}", id, user);
+            return userDto;
+    	} else {
+    		throw new IllegalArgumentException("Can't update user, because source DTO is "
+					+ "null or his id is null or target user not exists");
+    	}
     }
 
     @Override
     public UserDto getUserById(Long id) {
-    	User user = (User) storage.get(id);
-    	UserDto userDto = userMapper.userToUserDto(user);
-    	log.debug("Got user {} with id {} from storage", user, id);
-        return userDto;
+    	if (id != null) {
+    		User user = (User) storage.get(id);
+        	UserDto userDto = userMapper.userToUserDto(user);
+        	log.debug("Got user {} with id {} from storage", user, id);
+            return userDto;
+    	} else {
+    		throw new IllegalArgumentException("Bad user id. It must be non null");
+    	}
     }
 
     @Override
     public void deleteUserById(Long id) {
-    	storage.delete(id);
-    	log.debug("User with id {} successfully deleted", id);
+    	if (id != null && storage.delete(id)) {
+    		log.debug("User with id {} successfully deleted", id);
+    	} else {
+    		log.debug("User with id {} not deleted", id);
+    	}
     }
 
 	@Override
 	public boolean exists(Long id) {
-		Boolean exists = storage.contains(id);
+		Boolean exists = id == null ? false : storage.contains(id);
 		log.debug("User with id {} " + (exists ? "exists" : "not exists") + " in storage", id);
-		return storage.contains(id);
+		return exists;
 	}
 }

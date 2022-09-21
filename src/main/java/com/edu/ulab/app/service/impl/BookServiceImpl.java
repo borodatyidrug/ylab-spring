@@ -8,6 +8,8 @@ import com.edu.ulab.app.storage.IStorage;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,40 +32,56 @@ public class BookServiceImpl implements BookService {
 	
     @Override
     public BookDto createBook(BookDto bookDto) {
-    	Book book = bookMapper.bookDtoToBook(bookDto);
-    	log.debug("Created book: {}", book);
-    	Long generatedId = storage.save(book);
-        bookDto.setId(generatedId);
-        log.debug("Created book got generated id from storage. Id is {}", generatedId);
-        return bookDto;
+    	if (bookDto != null) {
+    		Book book = bookMapper.bookDtoToBook(bookDto);
+        	log.debug("Created book: {}", book);
+        	Long generatedId = storage.save(book);
+            bookDto.setId(generatedId);
+            log.debug("Created book got generated id from storage. Id is {}", generatedId);
+            return bookDto;
+    	} else {
+    		throw new IllegalArgumentException("Only non null values are allowed");
+    	}
     }
 
     @Override
     public BookDto updateBook(BookDto bookDto) {
-    	Book book = bookMapper.bookDtoToBook(bookDto);
-    	Long id = book.getId();
-    	storage.update(book);
-    	log.debug("Book with id {} successfully updated to {}", id, book);
-        return null;
+    	if (bookDto != null && bookDto.getId() != null && storage.contains(bookDto.getId())) {
+    		Book book = bookMapper.bookDtoToBook(bookDto);
+        	Long id = book.getId();
+        	storage.update(book);
+        	log.debug("Book with id {} successfully updated to {}", id, book);
+            return null;
+    	} else {
+    		throw new IllegalArgumentException("Can't update book, because source DTO is "
+					+ "null or his id is null or target book not exists");
+    	}
     }
 
     @Override
     public BookDto getBookById(Long id) {
-    	Book book = (Book) storage.get(id);
-    	BookDto bookDto = bookMapper.bookToBookDto(book);
-    	log.debug("Got book {} with id {} from storage", book, id);
-        return bookDto;
+    	if (id != null) {
+    		Book book = (Book) storage.get(id);
+        	BookDto bookDto = bookMapper.bookToBookDto(book);
+        	log.debug("Got book {} with id {} from storage", book, id);
+            return bookDto;
+    	} else {
+    		throw new IllegalArgumentException("Bad book id. It must be non null");
+    	}
     }
 
     @Override
     public void deleteBookById(Long id) {
-    	storage.delete(id);
-    	log.debug("Book with id {} successfully deleted", id);
+    	if (id != null && storage.delete(id)) {
+    		log.debug("Book with id {} successfully deleted", id);
+    	} else {
+    		log.debug("Book with id {} not deleted", id);
+    	}
     }
 
 	@Override
 	public boolean exists(Long id) {
-		Boolean exists = storage.contains(id);
+		Boolean exists = id == null ? false : storage.contains(id);
 		log.debug("Book with id {} " + (exists ? "exists" : "not exists") + " in storage", id);
 		return exists;
 	}

@@ -50,48 +50,37 @@ public class Storage implements IStorage {
 	@Override
 	public Long save(Idable<Long> obj) {
 		Idable<Long> object = obj;
-		if (object != null) {
-			log.debug("Got new object for save: {}", object);
-			Long generatedId = getNextUnusedId();
-			object.setId(generatedId);
-			log.debug("New object got id {}", generatedId);
-			objStorage.put(generatedId, object);
-			log.debug("Saved new object with id {}", generatedId);
-			return generatedId;
-		} else {
-			throw new IllegalArgumentException("Only non null values are allowed");
-		}
+		log.debug("Got new object for save: {}", object);
+		Long generatedId = getNextUnusedId();
+		object.setId(generatedId);
+		log.debug("New object got id {}", generatedId);
+		objStorage.put(generatedId, object);
+		log.debug("Saved new object with id {}", generatedId);
+		return generatedId;
 	}
 
 	@Override
 	public Object get(Long objId) {
-		if (objId != null) {
-			log.debug("Requested object with id {}", objId);
-			return Optional.ofNullable(objStorage.get(objId)).orElseThrow();
-		} else {
-			throw new IllegalArgumentException("Bad object id. It must be non null");
-		}
+		log.debug("Requested object with id {}", objId);
+		return objStorage.get(objId);
 	}
 
 	@Override
 	public void update(Idable<Long> obj) {
 		Object previous;
-		if (obj != null && obj.getId() != null && objStorage.containsKey(obj.getId())) {
-			previous = objStorage.replace(obj.getId(), obj);
-			log.debug("Object {} updated to object {}", previous, obj);
-		} else {
-			throw new IllegalArgumentException("Can't update object, because source object is "
-					+ "null or his id is null or target object not exist");
-		}
+		previous = objStorage.replace(obj.getId(), obj);
+		log.debug("Object {} updated to object {}", previous, obj);
 	}
 
 	@Override
-	public void delete(Long id) {
-		if (id != null && objStorage.remove(id) != null) {
+	public boolean delete(Long id) {
+		if (objStorage.remove(id) != null) {
 			freedIds.addLast(id);
 			log.debug("Object with id {} successfully deleted", id);
+			return true;
 		} else {
-			throw new IllegalArgumentException("Can't delete object, cause object not exist or his id is null");
+			log.debug("Object with id {} not deleted", id);
+			return false;
 		}
 	}
 	
@@ -109,6 +98,6 @@ public class Storage implements IStorage {
 
 	@Override
 	public boolean contains(Long id) {
-		return id == null ? false : objStorage.containsKey(id);
+		return objStorage.containsKey(id);
 	}
 }

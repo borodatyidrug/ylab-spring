@@ -71,7 +71,7 @@ public class UserDataFacade {
      * Обновляет информацию о самом пользователе и списке книг, ассоциированных с ним, если пользователь
      * с соответствующим id существует в хранилище.
      * @param updateUserBookRequest
-     * @return 
+     * @return Ответ с обновленными данными
      */
     public UserBookResponse updateUserWithBooks(UpdateUserBookRequest updateUserBookRequest) {
     	
@@ -89,10 +89,9 @@ public class UserDataFacade {
     				Long prevOwnerId = updatingBook.getUserId();
     				if (userId != prevOwnerId) { // если у книги был иной предыдущий владелец
     					UserDto prevOwner = userService.getUserById(prevOwnerId); // то получаю предыдущего владельца книги
-        				List<Long> prevOwnerBookIdList = prevOwner.getBooksId(); // и список его книг
+    					// и список его книг
         				// удаляю из него id книги, которая теперь становится книгой обновляемого пользователя
-        				prevOwnerBookIdList.remove(bookId);
-        				prevOwner.setBooksId(prevOwnerBookIdList); // возвращаю ему обновленный список его книг
+    					prevOwner.getBooksId().remove(bookId);
         				userService.updateUser(prevOwner); // обновляю самого предыдущего владельца в хранилище
         				updatingBook.setUserId(userId); // Меняю принадлежность книги на нового пользователя, к которому она теперь относится
         				bookService.updateBook(updatingBook);
@@ -109,6 +108,11 @@ public class UserDataFacade {
     			.build();
     }
 
+    /**
+     * Возвращает расширенную информацию о пользователе и книгах, ассоциированных с ним, по его идентификатору
+     * @param userId Идентификатор
+     * @return Ответ с расширенной информацией
+     */
     public DetailedUserBookResponse getUserWithBooks(Long userId) {
     	
     	log.info("Got user with books get request by id {}", userId);
@@ -131,8 +135,16 @@ public class UserDataFacade {
         return detailedUserBookResponse;
     }
 
+    /**
+     * Удаляет пользователя с указанным идентификатором и все ассоциированные с ним книги
+     * @param userId Идентификатор
+     */
     public void deleteUserWithBooks(Long userId) {
-    	userService.getUserById(userId).getBooksId().stream().forEach(bookService::deleteBookById);
+    	
+    	userService.getUserById(userId).getBooksId().stream().forEach(id -> {
+    		bookService.deleteBookById(id);
+    		log.info("Book with id {} successfully deleted from book list of user with id {} and from storage", id, userId);});
     	userService.deleteUserById(userId);
+    	log.info("User with id {} and his books succesfully deleted", userId);
     }
 }
