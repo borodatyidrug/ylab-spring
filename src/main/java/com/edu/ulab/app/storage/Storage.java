@@ -4,8 +4,6 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
-
 import org.springframework.stereotype.Repository;
 
 import lombok.extern.slf4j.Slf4j;
@@ -31,15 +29,15 @@ import lombok.extern.slf4j.Slf4j;
 @Repository
 public class Storage implements IStorage {
 	
-	Long currentId = 0L;
+	private Long currentId = 0L;
 	/*
 	 * Хранилище объектов
 	 */
-	Map<Long, Idable<?>> objStorage;
+	private Map<Long, Idable<?>> objStorage;
 	/**
 	 * Хранилище id, которые высвобождаются после удаления объектов из хранилища объектов
 	 */
-	Deque<Long> freedIds;
+	private Deque<Long> freedIds;
 	
 	public Storage() {
 		objStorage = new HashMap<>();
