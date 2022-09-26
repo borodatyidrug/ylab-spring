@@ -1,20 +1,20 @@
-Актуатор: http://localhost:8091/app/actuator
-Swagger: http://localhost:8091/app/swagger-ui/index.html
-rqid: requestId1010101
+Актуатор: http://localhost:8091/app/actuator<br>
+Swagger: http://localhost:8091/app/swagger-ui/index.html<br>
+rqid: requestId1010101<br><br>
 
-В приложении есть три реализации сервисов для манипуляции сущностями и их хранения:
-	* Работающие с in-memory хранилищем собственной реализации ("storage-user-service" и "storage-book-service")
-	* Осуществляющие ORM в БД H2 посредством JPA ("jpa-user-service" и "jpa-book-service")
-	* Работающие с БД H2 непосредственно через JdbcTemplate ("jdbc-user-service" и "jdbc-book-service")
+В приложении есть три реализации сервисов для манипуляции сущностями и их хранения:<br>
+* Работающие с in-memory хранилищем собственной реализации ("storage-user-service" и "storage-book-service")<br>
+* Осуществляющие ORM в БД H2 посредством JPA ("jpa-user-service" и "jpa-book-service")<br>
+* Работающие с БД H2 непосредственно через JdbcTemplate ("jdbc-user-service" и "jdbc-book-service")<br><br>
 	
-Для второго варианта приложение нужно запустить с профилем "jpa", для третьего варианта - с профилем "jdbc".
-Соответственно нужно и изменить внедряемую в фасад реализацию через @Qualifier, указывая там "{storage|jpa|jdbc}-{user|book}-service".
-Для варианта "storage-{user|book}-service" подойдет любой из двух профилей
+Для второго варианта приложение нужно запустить с профилем "jpa", для третьего варианта - с профилем "jdbc".<br>
+Соответственно нужно и изменить внедряемую в фасад реализацию через @Qualifier, указывая там "{storage|jpa|jdbc}-{user|book}-service".<br>
+Для варианта "storage-{user|book}-service" подойдет любой из двух профилей<br>
 
 # Тестовые данные для собственной реализации хранилища
 
 ### Первый POST-запрос: добавляем юзера и его книги
-
+```
 {
   "userRequest": {
     "fullName": "user1",
@@ -37,9 +37,9 @@ rqid: requestId1010101
     }
   ]
 }
-
+```
 #### Ответ:
-
+```
 {
   "userId": 0,
   "booksIdList": [
@@ -48,9 +48,9 @@ rqid: requestId1010101
     3
   ]
 }
-
+```
 ### Второй POST-запрос: добавляем другого юзера и его другие книги
-
+```
 {
   "userRequest": {
     "fullName": "user2",
@@ -73,9 +73,9 @@ rqid: requestId1010101
     }
   ]
 }
-
+```
 #### Ответ:
-
+```
 {
   "userId": 4,
   "booksIdList": [
@@ -84,18 +84,18 @@ rqid: requestId1010101
     7
   ]
 }
-
+```
 ### PUT-запрос: обновляем у юзера с id = 0 список книг. В новом списке книг две книги, уже существующие в хранилище
-
+```
 {
   "userId": 0,
   "bookIdList": [
     1, 5
   ]
 }
-
+```
 #### Ответ: 
-
+```
 {
   "userId": 0,
   "booksIdList": [
@@ -103,11 +103,11 @@ rqid: requestId1010101
     5
   ]
 }
-
+```
 ### GET-запрос: id = 0
 
 #### Ответ:
-
+```
 {
   "id": 0,
   "fullName": "user1",
@@ -130,7 +130,7 @@ rqid: requestId1010101
     }
   ]
 }
-
+```
 ### DELETE-запрос: id = 0
 
 ### GET-запрос: id = 0
@@ -138,7 +138,7 @@ rqid: requestId1010101
 ### GET-запрос: id = 4
 
 #### Ответ: книга с id = 5 исчезла у пользователя c id = 4, когда пользователь с id = 0 покинул хранилище с книгами, в числе которых была с id = 5
-
+```
 {
   "id": 4,
   "fullName": "user2",
@@ -161,9 +161,9 @@ rqid: requestId1010101
     }
   ]
 }
-
+```
 ### Третий POST-запрос: добавляем нового юзера с книгами. Юзеру и книгам должны быть присвоены хранилищем ранее высвобожденные id
-
+```
 {
   "userRequest": {
     "fullName": "user3",
@@ -186,9 +186,9 @@ rqid: requestId1010101
     }
   ]
 }
-
+```
 #### Ответ: 
-
+```
 {
   "userId": 0,
   "booksIdList": [
@@ -197,11 +197,11 @@ rqid: requestId1010101
     8
   ]
 }
-
+```
 # Тестовые данные для JPA и JdbcTemplate
 
 ### Первый POST-запрос: добавляем юзера и его книги
-
+```
 {
   "userRequest": {
     "fullName": "user1",
@@ -224,9 +224,9 @@ rqid: requestId1010101
     }
   ]
 }
-
+```
 #### Ответ:
-
+```
 {
   "userId": 1,
   "booksIdList": [
@@ -235,9 +235,9 @@ rqid: requestId1010101
     3
   ]
 }
-
+```
 ### Второй POST-запрос: добавляем другого юзера и его другие книги
-
+```
 {
   "userRequest": {
     "fullName": "user2",
@@ -260,9 +260,9 @@ rqid: requestId1010101
     }
   ]
 }
-
+```
 #### Ответ:
-
+```
 {
   "userId": 2,
   "booksIdList": [
@@ -271,29 +271,29 @@ rqid: requestId1010101
     6
   ]
 }
-
+```
 ### PUT-запрос: обновляем у юзера с id = 1 список книг. В новом списке книг две книги, уже существующие в БД
-
+```
 {
   "userId": 1,
   "bookIdList": [
     1, 5
   ]
 }
-
+```
 #### Ответ:
-
+```
 {
   "userId": 1,
   "bookIdList": [
     1, 5
   ]
 }
-
+```
 ### GET-запрос: id = 1
 
 #### Ответ:
-
+```
 {
   "id": 1,
   "fullName": "user1",
@@ -316,7 +316,7 @@ rqid: requestId1010101
     }
   ]
 }
-
+```
 ### DELETE-запрос: id = 1
 
 ### GET-запрос: id = 1
@@ -324,7 +324,7 @@ rqid: requestId1010101
 ### GET-запрос: id = 2
 
 #### Ответ: книга с id = 5 исчезла у пользователя c id = 2, когда пользователь с id = 1 был удален из БД со своими книгами, в числе которых была с id = 5
-
+```
 {
   "id": 2,
   "fullName": "user2",
@@ -347,9 +347,9 @@ rqid: requestId1010101
     }
   ]
 }
-
+```
 ### Третий POST-запрос: добавляем нового юзера с книгами.
-
+```
 {
   "userRequest": {
     "fullName": "user3",
@@ -372,9 +372,9 @@ rqid: requestId1010101
     }
   ]
 }
-
+```
 #### Ответ:
-
+```
 {
   "userId": 3,
   "booksIdList": [
@@ -383,3 +383,4 @@ rqid: requestId1010101
     9
   ]
 }
+```
