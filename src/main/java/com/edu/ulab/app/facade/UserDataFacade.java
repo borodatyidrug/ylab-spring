@@ -12,6 +12,8 @@ import com.edu.ulab.app.web.response.DetailedBookResponse;
 import com.edu.ulab.app.web.response.DetailedUserBookResponse;
 import com.edu.ulab.app.web.response.UserBookResponse;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -26,8 +28,8 @@ public class UserDataFacade {
     private final UserMapper userMapper;
     private final BookMapper bookMapper;
 
-    public UserDataFacade(UserService userService,
-                          BookService bookService,
+    public UserDataFacade(@Qualifier("jdbc-user-service") UserService userService,
+                          @Qualifier("jdbc-book-service") BookService bookService,
                           UserMapper userMapper,
                           BookMapper bookMapper) {
         this.userService = userService;
@@ -57,7 +59,7 @@ public class UserDataFacade {
                 .toList();
         
         createdUser.setBooksId(bookIdList);
-        userService.updateUser(userDto);
+        userService.updateUser(createdUser);
         
         log.info("Collected book ids: {}", bookIdList);
 

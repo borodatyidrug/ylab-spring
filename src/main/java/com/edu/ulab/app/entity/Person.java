@@ -1,10 +1,12 @@
 package com.edu.ulab.app.entity;
 
+import java.util.List;
+
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-
 import com.edu.ulab.app.storage.Idable;
 
 import lombok.AllArgsConstructor;
@@ -17,12 +19,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Book implements Idable<Long> {
+public class Person implements Idable<Long> {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private Long userId;
-	private String author;
+	private String fullName;
 	private String title;
-	private long pageCount;
+	private int age;
+	@ElementCollection
+	private List<Long> booksId;
 }
