@@ -12,5 +12,6 @@ public class DetailedUserBookResponse {
     private String fullName;
     private String title;
     private int age;
+    private String resume;
     List<DetailedBookResponse> bookResponceList;
 }

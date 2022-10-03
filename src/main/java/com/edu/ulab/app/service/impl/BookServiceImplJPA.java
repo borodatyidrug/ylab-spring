@@ -37,7 +37,7 @@ public class BookServiceImplJPA implements BookService {
     	}
 		Book book = bookMapper.bookDtoToBook(bookDto);
 		log.info("{} mapped to {}", bookDto, book);
-		Book savedBook = bookRepository.save(book);
+		Book savedBook = bookRepository.saveAndFlush(book);
 		log.info("{} saved to repository", savedBook);
 		return bookMapper.bookToBookDto(savedBook);
 	}
@@ -50,7 +50,7 @@ public class BookServiceImplJPA implements BookService {
     	}
 		Book book = bookMapper.bookDtoToBook(bookDto);
 		log.info("{} mapped to {}", bookDto, book);
-		Book updatedBook = bookRepository.save(book);
+		Book updatedBook = bookRepository.saveAndFlush(book);
 		log.info("{} updated by {} and saved to repository", updatedBook);
 		return bookMapper.bookToBookDto(updatedBook);
 	}

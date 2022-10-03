@@ -36,7 +36,7 @@ public class UserServiceImplJPA implements UserService {
     	}
 		Person person = userMapper.userDtoToUser(userDto);
 		log.info("{} mapped to {}", userDto, person);
-		Person savedPerson = userRepository.save(person);
+		Person savedPerson = userRepository.saveAndFlush(person);
 		log.info("{} saved to repository", savedPerson);
 		return userMapper.userToUserDto(savedPerson);
 	}
@@ -49,7 +49,7 @@ public class UserServiceImplJPA implements UserService {
     	}
 		Person person = userMapper.userDtoToUser(userDto);
 		log.info("{} mapped to {}", userDto, person);
-		Person updatedPerson = userRepository.save(person);
+		Person updatedPerson = userRepository.saveAndFlush(person);
 		log.info("{} updated by {} and saved to repository", updatedPerson);
 		return userMapper.userToUserDto(updatedPerson);
 	}
