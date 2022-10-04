@@ -44,12 +44,6 @@ public class Person implements Idable<Long> {
 	
 	@ElementCollection
 	@Column(name = "books_id")
-//	@OneToMany(mappedBy = "person", cascade = {
-//			CascadeType.MERGE,
-//			CascadeType.PERSIST,
-//			CascadeType.DETACH,
-//			CascadeType.REFRESH
-//	})
 	private List<Long> booksId;
 	
 	@Column
