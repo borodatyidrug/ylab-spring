@@ -5,19 +5,26 @@ logging:
     org.springframework: info
     com.edu.ulab.app: debug
 spring:
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
   datasource:
-    url: jdbc:h2:mem:userbook
+    url: jdbc:postgresql://GAYA:5432/mpl_ulab_db
     username: test
     password: test
   jpa:
     show-sql: true
     generate-ddl: true
     hibernate:
-      ddl-auto: create-drop
+      use-new-id-generator-mappings: false
+      ddl-auto: update
+    properties:
+      hibernate:
+        generate_statistics: true
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQL81Dialect
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+  mvc:
+    pathmatch:
+      matching-strategy: ant-path-matcher
 server:
   port: 8091
   servlet:
@@ -29,3 +36,4 @@ management:
     web:
       exposure:
         include: health,info
+ 

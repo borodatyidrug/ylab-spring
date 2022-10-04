@@ -8,4 +8,5 @@ public class UpdateUserRequest {
     private String title;
     private int age;
     private Long id;
+    private String resume; // Добавленное поле
 }

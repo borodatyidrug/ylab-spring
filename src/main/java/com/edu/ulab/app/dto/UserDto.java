@@ -12,5 +12,6 @@ public class UserDto implements Idable<Long> {
     private String fullName;
     private String title;
     private int age;
+    private String resume; // Добавленное поле
     private List<Long> booksId;
 }

@@ -35,7 +35,7 @@ public class UserServiceImplJDBC implements UserService {
 		if (userDto == null) {
     		throw new IllegalArgumentException("Only non null values are allowed");
     	}
-		String QUERY = "insert into person(full_name, title, age) values(?, ?, ?)";
+		String QUERY = "insert into person(full_name, title, age, resume) values(?, ?, ?, ?)";
 		log.info("Creating new user {}", userDto);
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 		jdbcTemplate.update(
@@ -43,6 +43,7 @@ public class UserServiceImplJDBC implements UserService {
 					PreparedStatement ps = connection.prepareStatement(QUERY, new String[] {"id"});
 					ps.setString(1, userDto.getFullName());
 					ps.setString(2, userDto.getTitle());
+					ps.setString(4, userDto.getResume());
 					ps.setLong(3, userDto.getAge());
 					return ps;
 				}, keyHolder);
@@ -62,7 +63,8 @@ public class UserServiceImplJDBC implements UserService {
 					full_name = ?,
 					title = ?,
 					age = ?,
-					books_id = ?
+					books_id = ?,
+					resume = ?,
 				where id = ?
 				""";
 		log.info("Updating user with id {}", userDto.getId());
@@ -72,7 +74,8 @@ public class UserServiceImplJDBC implements UserService {
 			ps.setString(2, userDto.getTitle());
 			ps.setLong(3, userDto.getAge());
 			ps.setArray(4, connection.createArrayOf("bigint", userDto.getBooksId().toArray()));
-			ps.setLong(5, userDto.getId());
+			ps.setLong(6, userDto.getId());
+			ps.setString(5, userDto.getResume());
 			return ps;
 		});
 		log.info("{} updated", userDto);
@@ -95,6 +98,7 @@ public class UserServiceImplJDBC implements UserService {
 				.title(rs.getString("title"))
 				.age(rs.getInt("age"))
 				.id(id)
+				.resume(rs.getString("resume"))
 				.booksId(Arrays.asList((Object[]) rs.getArray("books_id").getArray()).stream()
 						.map(s -> (Long) s)
 						.toList())
